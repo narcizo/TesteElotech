@@ -1,10 +1,12 @@
 package com.narcizo.elotech.service;
 
+import com.narcizo.elotech.entity.Contato;
 import com.narcizo.elotech.entity.Pessoa;
 import com.narcizo.elotech.repository.PessoaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +24,18 @@ public class PessoaService {
     }
 
     public Pessoa createPessoa(Pessoa pessoa) {
+        List<Contato> contatos = new ArrayList<>();
+
+        pessoa.getContatos().forEach(contato -> {
+            Contato newContato = new Contato(
+                    contato.getEmail(), contato.getTelefone(), pessoa
+            );
+            contatos.add(newContato);
+        });
+
+        pessoa.getContatos().clear();
+        pessoa.getContatos().addAll(contatos);
+
         return repository.save(pessoa);
     }
 

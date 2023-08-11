@@ -1,30 +1,40 @@
 package com.narcizo.elotech.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.narcizo.elotech.Utils.CustomDateDeserializer;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
+import javax.validation.constraints.NotNull;
+
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 public class Pessoa {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
-    String nome;
-    String cpf;
+    @NotNull
+    private String nome;
+    @NotNull
+    private String cpf;
+    @NotNull
     @JsonDeserialize(using = CustomDateDeserializer.class)
-    Date dataNascimento;
+    private Date dataNascimento;
+    @NotNull
+    @OneToMany(mappedBy = "pessoa", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Contato> contatos = new ArrayList<>();
 
-    public Pessoa(String nome, String cpf, Date dataNascimento) {
+    public Pessoa(String nome, String cpf, Date dataNascimento, List<Contato> contatos) {
         this.nome = nome;
         this.cpf = cpf;
         this.dataNascimento = dataNascimento;
+        this.contatos = contatos;
     }
+
 
     public Pessoa() {
     }
@@ -60,4 +70,23 @@ public class Pessoa {
     public void setDataNascimento(Date dataNascimento) {
         this.dataNascimento = dataNascimento;
     }
+
+//    @JsonIgnore
+    public List<Contato> getContatos() {
+        return contatos;
+    }
+
+    public void setContatos(List<Contato> contatos) {
+        this.contatos = contatos;
+    }
+
+//    public void addContato(Contato contato){
+//        this.contatos.add(contato);
+//        contato.setPessoa(this);
+//    }
+//
+//    public void removeContato(Contato contato){
+//        this.contatos.remove(contato);
+//        contato.setPessoa(null);
+//    }
 }
