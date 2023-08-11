@@ -1,6 +1,5 @@
 package com.narcizo.elotech.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.narcizo.elotech.Utils.CustomDateDeserializer;
 import jakarta.persistence.*;
@@ -80,13 +79,13 @@ public class Pessoa {
         this.contatos = contatos;
     }
 
-//    public void addContato(Contato contato){
-//        this.contatos.add(contato);
-//        contato.setPessoa(this);
-//    }
-//
-//    public void removeContato(Contato contato){
-//        this.contatos.remove(contato);
-//        contato.setPessoa(null);
-//    }
+    public void addContato(Contato contato){
+        this.contatos.add(contato);
+        contato.setPessoa(this);
+    }
+
+    public void removeContato(Contato contato){
+        this.contatos.remove(contato);
+        contato.setPessoa(null);
+    }
 }

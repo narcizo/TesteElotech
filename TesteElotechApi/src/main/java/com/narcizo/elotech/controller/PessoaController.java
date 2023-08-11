@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/pessoa")
@@ -22,11 +21,13 @@ public class PessoaController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Pessoa> GetPessoa(@PathVariable Long id){
-        Optional<Pessoa> pessoa = service.getPessoa(id);
+    public ResponseEntity<Pessoa> getPessoa(@PathVariable Long id){
+        Pessoa pessoa = service.getPessoa(id);
 
-        return pessoa.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Pessoa()));
+        if(pessoa.getId()==0)
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(pessoa);
+
+        return ResponseEntity.ok(pessoa);
     }
 
     @PostMapping

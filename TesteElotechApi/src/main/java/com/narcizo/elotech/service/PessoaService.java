@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PessoaService {
@@ -19,8 +18,8 @@ public class PessoaService {
         return repository.findAll();
     }
 
-    public Optional<Pessoa> getPessoa(Long id) {
-        return repository.findById(id);
+    public Pessoa getPessoa(Long id) {
+        return repository.findById(id).orElseGet(Pessoa::new);
     }
 
     public Pessoa createPessoa(Pessoa pessoa) {
@@ -40,22 +39,21 @@ public class PessoaService {
     }
 
     public Pessoa updatePessoa(Long id, Pessoa updatedPessoa) {
-        Optional<Pessoa> existingPessoa = this.getPessoa(id);
+        Pessoa existingPessoa = this.getPessoa(id);
 
-        if(existingPessoa.isPresent()){
-            existingPessoa.get().setNome(updatedPessoa.getNome());
-            existingPessoa.get().setCpf(updatedPessoa.getCpf());
-            existingPessoa.get().setDataNascimento(updatedPessoa.getDataNascimento());
+        if(existingPessoa.getId()==0)
+            return new Pessoa();
 
-            return repository.save(existingPessoa.get());
-        }
+        existingPessoa.setNome(updatedPessoa.getNome());
+        existingPessoa.setCpf(updatedPessoa.getCpf());
+        existingPessoa.setDataNascimento(updatedPessoa.getDataNascimento());
 
-        return new Pessoa();
+        return repository.save(existingPessoa);
     }
 
     public void deletePessoa(Long id) {
-        Optional<Pessoa> existingPessoa = this.getPessoa(id);
+        Pessoa pessoa = this.getPessoa(id);
 
-        existingPessoa.ifPresent(pessoa -> repository.delete(pessoa));
+        repository.delete(pessoa);
     }
 }
