@@ -1,5 +1,6 @@
 package com.narcizo.elotech.service;
 
+import com.narcizo.elotech.Utils.MyUtils;
 import com.narcizo.elotech.entity.Contato;
 import com.narcizo.elotech.entity.Pessoa;
 import com.narcizo.elotech.repository.ContatoRepository;
@@ -14,14 +15,12 @@ public class ContatoService {
     @Autowired
     ContatoRepository repository;
     @Autowired
-    PessoaRepository pessoaRepository;
-    @Autowired
     PessoaService pessoaService;
 
     public List<Contato> getContatos(Long pessoaId) {
         Pessoa pessoa = pessoaService.getPessoa(pessoaId);
 
-        if(pessoa.getId()==0)
+        if(pessoa.getId()==null)
             return Collections.emptyList();
 
         return pessoa.getContatos();
@@ -34,34 +33,55 @@ public class ContatoService {
     public List<Contato> addContatos(Long pessoaId, Contato contato) {
         Pessoa pessoa = pessoaService.getPessoa(pessoaId);
 
-        if(pessoa.getId()==0)
+        if(pessoa.getId()==null && isContatoObjectValid(contato))
             return Collections.emptyList();
 
-        pessoa.addContato(contato);
+        pessoa.getContatos().add(contato);
 
-        return pessoaRepository.save(pessoa).getContatos();
+        pessoaService.updatePessoa(pessoaId, pessoa);
+
+        return pessoa.getContatos();
     }
 
     public List<Contato> updateContato(Long pessoaId, Long contatoId, Contato contato) {
         Pessoa pessoa = pessoaService.getPessoa(pessoaId);
         Contato existingContato = getContato(contatoId);
 
-        if(pessoa.getId()==0 || existingContato.getId()==0)
+        if((pessoa.getId()==null
+                || existingContato.getId()==null
+                || pessoa.getContatos().stream().noneMatch(c -> Objects.equals(c.getId(), contatoId)))
+                && isContatoObjectValid(contato))
             return Collections.emptyList();
 
         existingContato.setEmail(contato.getEmail());
         existingContato.setTelefone(contato.getTelefone());
 
-        return pessoaRepository.save(pessoa).getContatos();
+        pessoaService.updatePessoa(pessoaId, pessoa);
+
+        return pessoa.getContatos();
     }
 
-    public void deleteContato(Long pessoaId, Long contatoId) {
+    public Contato deleteContato(Long pessoaId, Long contatoId) {
         Pessoa pessoa = pessoaService.getPessoa(pessoaId);
         Contato contato = getContato(contatoId);
 
-        if(pessoa.getId()==0 || contato.getId()==0)
-            return;
+        if(pessoa.getId()==null
+                || contato.getId()==null
+                || pessoa.getContatos().size() == 1
+                || pessoa.getContatos().stream().noneMatch(c -> Objects.equals(c.getId(), contatoId)))
+            return new Contato();
 
         repository.delete(contato);
+        pessoa.getContatos().remove(contato);
+        pessoaService.updatePessoa(pessoaId, pessoa);
+
+        return contato;
+    }
+
+    public boolean isContatoObjectValid(Contato contato){
+        if(MyUtils.validatePhoneNumber(contato.getTelefone()).isEmpty()
+                || MyUtils.validateEmail(contato.getEmail()).isEmpty())
+            return false;
+        return true;
     }
 }

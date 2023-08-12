@@ -1,6 +1,5 @@
 package com.narcizo.elotech.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import javax.validation.constraints.NotNull;
@@ -14,15 +13,10 @@ public class Contato {
     private String email;
     @NotNull
     private String telefone;
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pessoa_id")
-    private Pessoa pessoa;
 
-    public Contato(String email, String telefone, Pessoa pessoa) {
+    public Contato(String email, String telefone) {
         this.email = email;
         this.telefone = telefone;
-        this.pessoa = pessoa;
     }
 
     public Contato() {
@@ -46,13 +40,5 @@ public class Contato {
 
     public void setTelefone(String telefone) {
         this.telefone = telefone;
-    }
-
-    public Pessoa getPessoa() {
-        return pessoa;
-    }
-
-    public void setPessoa(Pessoa pessoa) {
-        this.pessoa = pessoa;
     }
 }

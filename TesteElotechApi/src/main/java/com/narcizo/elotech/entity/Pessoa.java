@@ -24,7 +24,7 @@ public class Pessoa {
     @JsonDeserialize(using = CustomDateDeserializer.class)
     private Date dataNascimento;
     @NotNull
-    @OneToMany(mappedBy = "pessoa", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Contato> contatos = new ArrayList<>();
 
     public Pessoa(String nome, String cpf, Date dataNascimento, List<Contato> contatos) {
@@ -77,15 +77,5 @@ public class Pessoa {
 
     public void setContatos(List<Contato> contatos) {
         this.contatos = contatos;
-    }
-
-    public void addContato(Contato contato){
-        this.contatos.add(contato);
-        contato.setPessoa(this);
-    }
-
-    public void removeContato(Contato contato){
-        this.contatos.remove(contato);
-        contato.setPessoa(null);
     }
 }

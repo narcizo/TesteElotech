@@ -17,14 +17,14 @@ public class PessoaController {
 
     @GetMapping
     public List<Pessoa> getPessoasList () {
-        return service.getClientList();
+        return service.getPessoaList();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Pessoa> getPessoa(@PathVariable Long id){
         Pessoa pessoa = service.getPessoa(id);
 
-        if(pessoa.getId()==0)
+        if(pessoa.getId()==null)
             ResponseEntity.status(HttpStatus.NOT_FOUND).body(pessoa);
 
         return ResponseEntity.ok(pessoa);
@@ -34,7 +34,7 @@ public class PessoaController {
     public ResponseEntity<Pessoa> createPessoa (@RequestBody Pessoa pessoa) {
         Pessoa created = service.createPessoa(pessoa);
 
-        if (created.getId() == 0)
+        if (created.getId() == null)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(created);
         return ResponseEntity.ok(created);
     }
@@ -43,7 +43,7 @@ public class PessoaController {
     public ResponseEntity<Pessoa> updatePessoa(@PathVariable Long id, @RequestBody Pessoa updatedPessoa){
         Pessoa updated = service.updatePessoa(id, updatedPessoa);
 
-        if (updated.getId() == 0)
+        if (updated.getId() == null)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(updated);
         return ResponseEntity.ok(updated);
     }
