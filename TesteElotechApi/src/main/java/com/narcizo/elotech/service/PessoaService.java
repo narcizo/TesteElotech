@@ -6,7 +6,6 @@ import com.narcizo.elotech.entity.Pessoa;
 import com.narcizo.elotech.repository.PessoaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,9 +16,6 @@ public class PessoaService {
     @Autowired
     PessoaRepository repository;
 
-    @Autowired
-    ContatoService contatoService;
-
     public List<Pessoa> getPessoaList() {
         return repository.findAll();
     }
@@ -29,19 +25,21 @@ public class PessoaService {
     }
 
     public Pessoa createPessoa(Pessoa pessoa) {
-        if (this.isPessoaObjectValid(pessoa) && !pessoa.getContatos().isEmpty())
-            return new Pessoa();
+        if (!this.isPessoaObjectValid(pessoa))
+            return pessoa;
 
         List<Contato> contatos = new ArrayList<>();
 
-        pessoa.getContatos().forEach(contato -> {
+        for (Contato contato: pessoa.getContatos()) {
             Contato newContato = new Contato(
                     contato.getEmail(), contato.getTelefone()
             );
-            contatos.add(newContato);
-        });
+            if (!contato.getEmail().isEmpty() && !contato.getTelefone().isEmpty())
+                contatos.add(newContato);
+        }
 
-        //TODO Fazer Validação de contatos aqui
+        if (contatos.isEmpty())
+            return pessoa;
 
         pessoa.getContatos().clear();
         pessoa.getContatos().addAll(contatos);
@@ -52,8 +50,8 @@ public class PessoaService {
     public Pessoa updatePessoa(Long id, Pessoa updatedPessoa) {
         Pessoa existingPessoa = this.getPessoa(id);
 
-        if(existingPessoa.getId()==null || this.isPessoaObjectValid(existingPessoa))
-            return new Pessoa();
+        if(existingPessoa.getId()==null || !this.isPessoaObjectValid(updatedPessoa))
+            return updatedPessoa;
 
         existingPessoa.setNome(updatedPessoa.getNome());
         existingPessoa.setCpf(updatedPessoa.getCpf());
@@ -62,14 +60,19 @@ public class PessoaService {
         return repository.save(existingPessoa);
     }
 
-    public void deletePessoa(Long id) {
-        Pessoa pessoa = this.getPessoa(id);
+    public Pessoa deletePessoa(Long id) {
+        Pessoa pessoaToBeDeleted = this.getPessoa(id);
 
-        repository.delete(pessoa);
+        if(pessoaToBeDeleted.getId()==null)
+            return pessoaToBeDeleted;
+
+        repository.delete(pessoaToBeDeleted);
+
+        return pessoaToBeDeleted;
     }
 
     public boolean isPessoaObjectValid(Pessoa pessoa){
-        if(MyUtils.validateCpf(pessoa.getCpf()).isEmpty() || pessoa.getDataNascimento().after(new Date()))
+        if(pessoa.getCpf().isEmpty() || pessoa.getDataNascimento().after(new Date()))
             return false;
         return true;
     }

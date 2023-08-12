@@ -2,7 +2,8 @@ package com.narcizo.elotech.Utils;
 
 public class MyUtils {
     public static String validateEmail(String email){
-        if (email.matches("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$"))
+        if(email.matches("^[_A-Za-z0-9-+]+(\\.[_A-Za-z0-9-]+)*@"
+                + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$"))
             return email;
         return "";
     }
@@ -16,20 +17,18 @@ public class MyUtils {
 
     public static String validateCpf(String cpf){
         // Aceita input de cpf xxx.xxx.xxx-xx
-        cpf = cpf.replaceAll("[^0-9]", "");
+        String nakedCpf = cpf.replaceAll("[^0-9]", "");
 
-        if (cpf.length() != 11 || cpf.matches("(\\d)\\1{10}"))
+        if (nakedCpf.length() != 11 || nakedCpf.matches("(\\d)\\1{10}"))
             return "";
 
-        int[] digits = extractDigits(11, cpf);
+        int[] digits = extractDigits(11, nakedCpf);
 
         int firstVerifier = calculateVerifierDigit(digits, 9, 10);
         int secondVerifier = calculateVerifierDigit(digits, 10, 11);
 
         if (digits[9] == firstVerifier && digits[10] == secondVerifier)
-            return String.format("%03d.%03d.%03d-%02d",
-                    digits[0], digits[1], digits[2],
-                    digits[9] * 10 + digits[10]);
+            return cpf;
 
         return "";
     }

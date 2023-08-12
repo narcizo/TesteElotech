@@ -26,10 +26,10 @@ public class ContatoController {
     @PostMapping("/{pessoaId}/add-contato")
     public ResponseEntity<List<Contato>>  addContato(@PathVariable Long pessoaId,
                                                      @RequestBody Contato contato){
-        List<Contato> contatos = service.addContatos(pessoaId, contato);
-        if (contatos.isEmpty())
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(contatos);
-        return ResponseEntity.ok(contatos);
+        List<Contato> created = service.addContatos(pessoaId, contato);
+        if (created.isEmpty())
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(created);
+        return ResponseEntity.ok(created);
     }
 
     @PutMapping("/{pessoaId}/update-contato/{contatoId}")
@@ -44,10 +44,10 @@ public class ContatoController {
 
     @DeleteMapping("/{pessoaId}/delete-contato/{contatoId}")
     public ResponseEntity<Contato> deleteContato(@PathVariable Long pessoaId, @PathVariable Long contatoId){
-        Contato contato = service.deleteContato(pessoaId, contatoId);
+        Contato deleted = service.deleteContato(pessoaId, contatoId);
 
-        if (contato.getId() == null)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(contato);
-        return ResponseEntity.ok(contato);
+        if (deleted.getId() == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(deleted);
+        return ResponseEntity.ok(deleted);
     }
 }

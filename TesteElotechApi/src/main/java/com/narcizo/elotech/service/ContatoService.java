@@ -4,7 +4,6 @@ import com.narcizo.elotech.Utils.MyUtils;
 import com.narcizo.elotech.entity.Contato;
 import com.narcizo.elotech.entity.Pessoa;
 import com.narcizo.elotech.repository.ContatoRepository;
-import com.narcizo.elotech.repository.PessoaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -79,8 +78,7 @@ public class ContatoService {
     }
 
     public boolean isContatoObjectValid(Contato contato){
-        if(MyUtils.validatePhoneNumber(contato.getTelefone()).isEmpty()
-                || MyUtils.validateEmail(contato.getEmail()).isEmpty())
+        if(contato.getTelefone().isEmpty() || contato.getEmail().isEmpty())
             return false;
         return true;
     }

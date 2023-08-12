@@ -49,7 +49,11 @@ public class PessoaController {
     }
 
     @DeleteMapping("/{id}")
-    public void deletePessoa(@PathVariable Long id){
-        service.deletePessoa(id);
+    public ResponseEntity<Pessoa> deletePessoa(@PathVariable Long id){
+        Pessoa deleted = service.deletePessoa(id);
+
+        if (deleted.getId() == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(deleted);
+        return ResponseEntity.ok(deleted);
     }
 }

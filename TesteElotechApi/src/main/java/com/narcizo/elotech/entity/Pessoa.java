@@ -2,6 +2,7 @@ package com.narcizo.elotech.entity;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.narcizo.elotech.Utils.CustomDateDeserializer;
+import com.narcizo.elotech.Utils.MyUtils;
 import jakarta.persistence.*;
 
 import javax.validation.constraints.NotNull;
@@ -29,11 +30,10 @@ public class Pessoa {
 
     public Pessoa(String nome, String cpf, Date dataNascimento, List<Contato> contatos) {
         this.nome = nome;
-        this.cpf = cpf;
+        this.cpf = MyUtils.validateCpf(cpf);
         this.dataNascimento = dataNascimento;
         this.contatos = contatos;
     }
-
 
     public Pessoa() {
     }
@@ -59,7 +59,7 @@ public class Pessoa {
     }
 
     public void setCpf(String cpf) {
-        this.cpf = cpf;
+        this.cpf = MyUtils.validateCpf(cpf);
     }
 
     public Date getDataNascimento() {

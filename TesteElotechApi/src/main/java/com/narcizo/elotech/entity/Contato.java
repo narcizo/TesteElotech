@@ -1,5 +1,6 @@
 package com.narcizo.elotech.entity;
 
+import com.narcizo.elotech.Utils.MyUtils;
 import jakarta.persistence.*;
 
 import javax.validation.constraints.NotNull;
@@ -15,8 +16,8 @@ public class Contato {
     private String telefone;
 
     public Contato(String email, String telefone) {
-        this.email = email;
-        this.telefone = telefone;
+        this.email = MyUtils.validateEmail(email);
+        this.telefone = MyUtils.validatePhoneNumber(telefone);
     }
 
     public Contato() {
@@ -31,7 +32,7 @@ public class Contato {
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        this.email = MyUtils.validateEmail(email);
     }
 
     public String getTelefone() {
@@ -39,6 +40,6 @@ public class Contato {
     }
 
     public void setTelefone(String telefone) {
-        this.telefone = telefone;
+        this.telefone = MyUtils.validatePhoneNumber(telefone);
     }
 }
