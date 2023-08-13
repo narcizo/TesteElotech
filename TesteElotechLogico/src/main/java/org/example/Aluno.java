@@ -1,20 +1,24 @@
 package org.example;
 
 public class Aluno {
-    private int nota;
+    private int notaInicial;
+    private int notaFinal;
     private boolean isAprovado;
+    private boolean isArredondado;
 
     public Aluno(int nota) {
-        this.nota = nota;
+        this.notaInicial = nota;
         this.isAprovado = false;
+        this.isArredondado = false;
     }
 
-    public int getNota() {
-        return nota;
+    public int getNotaFinal() {
+        return notaFinal;
     }
 
-    public void setNota(int nota) {
-        this.nota = nota;
+    public void setNota() {
+        this.notaFinal = this.calculoNota();
+        this.setIsAprovado(this.notaFinal >= 40);
     }
 
     public boolean getIsAprovado() {
@@ -22,41 +26,41 @@ public class Aluno {
     }
 
     public void setIsAprovado(boolean aprovado) {
-        isAprovado = aprovado;
+        this.isAprovado = aprovado;
+    }
+
+    public boolean isArredondado() {
+        return isArredondado;
+    }
+
+    public void setArredondado(boolean arredondado) {
+        isArredondado = arredondado;
+    }
+
+    public int getNotaInicial() {
+        return notaInicial;
     }
 
     public int calculoNota(){
-        if (this.getNota() < 0) this.setNota(0);
-        if (this.getNota() > 100) this.setNota(100);
+        int notaCalc;
 
-        int nota = this.getNota();
+        if (this.getNotaInicial() < 0) notaCalc = 0;
+        else if (this.getNotaInicial() > 100) notaCalc = 100;
+        else notaCalc = this.getNotaInicial();
 
-        if(nota < 38){
-            this.setIsAprovado(false);
-            System.out.println("Nota " + nota + ". Não arredonda (resultado é menor que 40)\n");
-        } else {
-            int multiploDeCinco = getProximoMultiploCinco(nota);
+        if(notaCalc >= 38) {
+            int multiploDeCinco = this.getProximoMultiploCinco(notaCalc);
 
-            if(multiploDeCinco - nota < 3){
-                this.setNota(multiploDeCinco);
-                System.out.println("Nota " + nota + ". Arredonda para " + multiploDeCinco
-                        + " ("+multiploDeCinco+" - " + nota + " é menor que 3)\n");
-            }else {
-                System.out.println("Nota " + nota + ". Não arredonda "
-                        + "("+multiploDeCinco+" - " + nota
-                        + (multiploDeCinco - nota == 3
-                        ?" é igual a"
-                        :" é maior que")
-                        + " 3)\n");
+            if (multiploDeCinco - notaCalc < 3 && multiploDeCinco - notaCalc > 0) {
+                this.setArredondado(true);
+                return multiploDeCinco;
             }
-            if(this.getNota() >= 40)
-                this.setIsAprovado(true);
         }
 
-        return this.getNota();
+        return notaCalc;
     }
 
-    private static int getProximoMultiploCinco(int numeroAtual){
+    public int getProximoMultiploCinco(int numeroAtual){
         do {
             if (numeroAtual % 5 == 0)
                 return numeroAtual;
