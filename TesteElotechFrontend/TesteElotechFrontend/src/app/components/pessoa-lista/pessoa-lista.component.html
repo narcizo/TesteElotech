@@ -1,3 +1,5 @@
+<h1>Pessoas</h1>
+<mat-paginator [pageSizeOptions]="[5, 10, 25]" [pageSize]="5" [length]="pessoasListTotal.length" (page)="onPageChange($event)"></mat-paginator>
 
 <table mat-table [dataSource]="pessoasList" class="mat-elevation-z8">
     <ng-container matColumnDef="id">
@@ -20,12 +22,15 @@
         <td mat-cell *matCellDef="let element"> {{element.dataNascimento}} </td>
     </ng-container>
 
-    <ng-container matColumnDef="delete">
-        <th mat-header-cell *matHeaderCellDef></th>
+    <ng-container matColumnDef="options">
+        <th mat-header-cell *matHeaderCellDef> Opções</th>
         <td mat-cell *matCellDef="let element">
-          <button mat-mini-fab color="primary" (click)="deletePessoa(element.id)">
-            <mat-icon>delete</mat-icon>
-          </button>
+            <button mat-mini-fab color="primary" (click)="editPessoa(element.id)">
+                <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-mini-fab color="primary" (click)="deletePessoa(element.id)">
+                <mat-icon>delete</mat-icon>
+            </button>
         </td>
     </ng-container>
 
@@ -42,6 +47,9 @@
                     <button mat-mini-fab color="primary" (click)="deleteContato(pessoa.id, contato.id)">
                         <mat-icon>delete</mat-icon>
                     </button>
+                    <button mat-mini-fab color="primary" (click)="editContato(pessoa.id, contato.id)">
+                        <mat-icon>edit</mat-icon>
+                    </button>
                 </div>
             </div>
             <div style="margin: 10px;">
@@ -55,8 +63,9 @@
     </td>
     </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="['id', 'nome', 'cpf', 'dataNascimento', 'delete']"></tr>
-    <tr mat-row *matRowDef="let pessoa; columns: ['id', 'nome', 'cpf', 'dataNascimento', 'delete', 'expandedDetail']"
+    <tr mat-header-row *matHeaderRowDef="['id', 'nome', 'cpf', 'dataNascimento', 'options', ]"></tr>
+    <tr mat-row *matRowDef="let pessoa; columns: ['id', 'nome', 'cpf', 'dataNascimento', 'options', 'expandedDetail']"
         (click)="toggleRow(pessoa)">
     </tr>
+
 </table>

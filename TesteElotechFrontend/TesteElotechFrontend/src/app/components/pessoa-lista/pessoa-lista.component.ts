@@ -2,7 +2,8 @@ import { Component } from '@angular/core';
 import { ApiService } from './../../api.service';
 import { Pessoa } from './../../entities/Pessoa'; 
 import * as moment from 'moment';
-import { Contato } from 'src/app/entities/Contato';
+import { MatPaginator } from '@angular/material/paginator';
+import { ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-pessoa-lista',
@@ -11,20 +12,31 @@ import { Contato } from 'src/app/entities/Contato';
 })
 export class PessoaListaComponent {
   pessoasList: Pessoa[] = [];
+  pessoasListTotal: Pessoa[] = [];
   expandedRowIndex: number | null = null;
+  @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
 
   constructor(private apiService: ApiService){}
 
+
   ngOnInit(){
+    this.getPessoasPaginated(0, 5);
     this.getPessoas();
+  }
+
+  onPageChange(event: any) {
+    const pageIndex  = event.pageIndex;
+    const pageSize = event.pageSize;
+
+    this.getPessoasPaginated(pageIndex , pageSize);
   }
 
   getPessoas() {
     this.apiService.getPessoas().subscribe(
       (response: Pessoa[]) => {
-        this.pessoasList = response;
-        this.pessoasList.map((p) => p.dataNascimento = moment(p.dataNascimento).format('DD/MM/YYYY'));
-        console.log(this.pessoasList);
+        this.pessoasListTotal = response;
+        this.pessoasListTotal.map((p) => p.dataNascimento = moment(p.dataNascimento).format('DD/MM/YYYY'));
+        this.paginator.length = this.pessoasListTotal.length;
       },
       error => {
         console.error(error);
@@ -32,25 +44,21 @@ export class PessoaListaComponent {
     );
   }
 
-  // getContatos(id: number) {
-  //   this.apiService.getContatos(id).subscribe(
-  //     (response: Contato[]) => {
-  //       this.pessoasList.map((p)=>{
-  //         if(p.id == id){
-  //           p.contatos = response;
-  //           console.log(p.contatos);
-  //         }
-  //       })
-  //       console.log(this.pessoasList);
-  //     },
-  //     error => {
-  //       console.error(error);
-  //     }
-  //   );
-  // }
+  getPessoasPaginated(page: number, pageSize: number) {
+    this.apiService.getPessoasPaginated(page, pageSize).subscribe(
+      (response: any) => {
+        this.pessoasList = response["content"];
+        this.pessoasList.map((p) => p.dataNascimento = moment(p.dataNascimento).format('DD/MM/YYYY'));
+      },
+      error => {
+        console.error(error);
+      }
+    );
+  }
 
   deletePessoa(id: number ){
     console.log("deletando: ", id)
+    this.apiService.deletePessoa(id).subscribe();
   }
 
   deleteContato(pessoaId: number, contatoId: number){
@@ -58,11 +66,15 @@ export class PessoaListaComponent {
   }
 
   createContato(){
-    console.log("Create contato")
+    console.log("Creating Contato")
   }
 
-  updateContato(pessoaId: number, contatoId: number){
-    console.log(pessoaId, contatoId)
+  editContato(pessoaId: number, contatoId: number){
+    console.log("Updating Contato ", pessoaId, contatoId)
+  }
+
+  editPessoa(pessoaId: number){
+    console.log("Updating Pessoa ", pessoaId)
   }
 
   toggleRow(pessoa: Pessoa) {
@@ -72,7 +84,6 @@ export class PessoaListaComponent {
       this.expandedRowIndex = this.pessoasList.indexOf(pessoa);
     }
   }
-
 
   isRowExpanded(pessoa: Pessoa): boolean {
     return this.expandedRowIndex === this.pessoasList.indexOf(pessoa);

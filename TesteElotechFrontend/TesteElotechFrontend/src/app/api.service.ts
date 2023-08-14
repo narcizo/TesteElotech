@@ -19,4 +19,12 @@ export class ApiService {
   getContatos(id: number): Observable<Contato[]>{
     return this.http.get<Contato[]>(`${environment.apiUrl}/pessoa/${id}/contatos`);
   }
+
+  getPessoasPaginated(page: number, pageSize: number): Observable<Pessoa[]>{
+    return this.http.get<Pessoa[]>(`${environment.apiUrl}/pessoa/paginated?page=${page}&pageSize=${pageSize}`);
+  }
+
+  deletePessoa(id: number){
+    return this.http.delete<void>(`${environment.apiUrl}/pessoa`);
+  }
 }
