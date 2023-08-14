@@ -18,7 +18,12 @@ public class Main {
         iputNotas = input.split(" ");
 
         for (String numberString : iputNotas) {
-            alunos.add(new Aluno(Integer.parseInt(numberString)));
+            try{
+                alunos.add(new Aluno(Integer.parseInt(numberString)));
+            }
+            catch (NumberFormatException nfe){
+                System.out.printf("Input '%s' inválido.\n\n", numberString);
+            }
         }
 
         alunos.forEach(Aluno::setNota);
