@@ -5,6 +5,10 @@ import com.narcizo.elotech.entity.Contato;
 import com.narcizo.elotech.entity.Pessoa;
 import com.narcizo.elotech.repository.PessoaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -26,6 +30,15 @@ public class PessoaService {
 
     public List<Pessoa> getPessoaList() {
         return repository.findAll();
+    }
+
+    public Page<Pessoa> getPaginatedPessoasList(int page, int pageSize) {
+        PageRequest pageRequest = PageRequest.of(
+                page,
+                pageSize,
+                Sort.Direction.ASC,
+                "id");
+        return repository.findAll(pageRequest);
     }
 
     public Pessoa getPessoa(Long id) {

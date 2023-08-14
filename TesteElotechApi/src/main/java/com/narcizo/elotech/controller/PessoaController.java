@@ -3,6 +3,7 @@ package com.narcizo.elotech.controller;
 import com.narcizo.elotech.entity.Pessoa;
 import com.narcizo.elotech.service.PessoaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,14 @@ public class PessoaController {
     @GetMapping
     public List<Pessoa> getPessoasList () {
         return service.getPessoaList();
+    }
+
+    @GetMapping("/paginated")
+    public Page<Pessoa> getPaginatedPessoasList(
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "pageSize", defaultValue = "10") int pageSize
+    ) {
+        return service.getPaginatedPessoasList(page, pageSize);
     }
 
     @GetMapping("/{id}")
