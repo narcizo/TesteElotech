@@ -68,7 +68,7 @@ public class ContatoService {
                 || contato.getId()==null
                 || pessoa.getContatos().size() == 1
                 || pessoa.getContatos().stream().noneMatch(c -> Objects.equals(c.getId(), contatoId)))
-            return new Contato();
+            return contato;
 
         repository.delete(contato);
         pessoa.getContatos().remove(contato);

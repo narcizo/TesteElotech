@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -24,36 +25,41 @@ public class PessoaController {
     public ResponseEntity<Pessoa> getPessoa(@PathVariable Long id){
         Pessoa pessoa = service.getPessoa(id);
 
-        if(pessoa.getId()==null)
-            ResponseEntity.status(HttpStatus.NOT_FOUND).body(pessoa);
-
-        return ResponseEntity.ok(pessoa);
+        return this.doesPessoaExist(pessoa);
     }
 
     @PostMapping
     public ResponseEntity<Pessoa> createPessoa (@RequestBody Pessoa pessoa) {
         Pessoa created = service.createPessoa(pessoa);
 
-        if (created.getId() == null)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(created);
-        return ResponseEntity.ok(created);
+        return this.doesPessoaExist(created);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Pessoa> updatePessoa(@PathVariable Long id, @RequestBody Pessoa updatedPessoa){
         Pessoa updated = service.updatePessoa(id, updatedPessoa);
 
-        if (updated.getId() == null)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(updated);
-        return ResponseEntity.ok(updated);
+        return this.doesPessoaExist(updated);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Pessoa> deletePessoa(@PathVariable Long id){
         Pessoa deleted = service.deletePessoa(id);
 
-        if (deleted.getId() == null)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(deleted);
-        return ResponseEntity.ok(deleted);
+        return this.doesPessoaExist(deleted);
+    }
+
+    private ResponseEntity<Pessoa> doesPessoaExist(Pessoa pessoa){
+        if (pessoa.getId() == null){
+            if(pessoa.getCpf() == null || pessoa.getDataNascimento() == null)
+                throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Pessoa não encontrada"
+            );
+            if(!service.isPessoaObjectValid(pessoa))
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST, "Payload incorreto"
+                );
+        }
+        return ResponseEntity.ok(pessoa);
     }
 }

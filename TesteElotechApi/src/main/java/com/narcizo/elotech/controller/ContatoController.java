@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -18,18 +19,15 @@ public class ContatoController {
     @GetMapping("/{pessoaId}/contatos")
     public ResponseEntity<List<Contato>> getContatos(@PathVariable Long pessoaId){
         List<Contato> contatos = service.getContatos(pessoaId);
-        if (contatos.isEmpty())
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(contatos);
-        return ResponseEntity.ok(contatos);
+
+        return this.doesContatosExist(contatos);
     }
 
     @PostMapping("/{pessoaId}/add-contato")
     public ResponseEntity<List<Contato>>  addContato(@PathVariable Long pessoaId,
                                                      @RequestBody Contato contato){
         List<Contato> created = service.addContatos(pessoaId, contato);
-        if (created.isEmpty())
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(created);
-        return ResponseEntity.ok(created);
+        return this.doesContatosExist(created);
     }
 
     @PutMapping("/{pessoaId}/update-contato/{contatoId}")
@@ -37,17 +35,29 @@ public class ContatoController {
                                                         @PathVariable Long contatoId,
                                                         @RequestBody Contato contato){
         List<Contato> contatos = service.updateContato(pessoaId, contatoId, contato);
-        if (contatos.isEmpty())
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(contatos);
-        return ResponseEntity.ok(contatos);
+        return this.doesContatosExist(contatos);
     }
 
     @DeleteMapping("/{pessoaId}/delete-contato/{contatoId}")
     public ResponseEntity<Contato> deleteContato(@PathVariable Long pessoaId, @PathVariable Long contatoId){
         Contato deleted = service.deleteContato(pessoaId, contatoId);
 
-        if (deleted.getId() == null)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(deleted);
-        return ResponseEntity.ok(deleted);
+        return this.doesContatoExist(deleted);
+    }
+
+    private ResponseEntity<List<Contato>> doesContatosExist(List<Contato> contatos){
+        if (contatos.isEmpty())
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Contato ou Pessoa não encontrado."
+            );
+        return ResponseEntity.ok(contatos);
+    }
+
+    private ResponseEntity<Contato> doesContatoExist(Contato contato){
+        if (contato.getId() == null)
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Contato ou Pessoa não encontrado."
+            );
+        return ResponseEntity.ok(contato);
     }
 }

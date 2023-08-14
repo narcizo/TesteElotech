@@ -5,7 +5,10 @@ import com.narcizo.elotech.entity.Contato;
 import com.narcizo.elotech.entity.Pessoa;
 import com.narcizo.elotech.repository.PessoaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,6 +18,11 @@ import java.util.List;
 public class PessoaService {
     @Autowired
     PessoaRepository repository;
+
+    @Autowired
+    public PessoaService(PessoaRepository repository) {
+        this.repository = repository;
+    }
 
     public List<Pessoa> getPessoaList() {
         return repository.findAll();
@@ -72,7 +80,7 @@ public class PessoaService {
     }
 
     public boolean isPessoaObjectValid(Pessoa pessoa){
-        if(pessoa.getCpf().isEmpty() || pessoa.getDataNascimento().after(new Date()))
+        if(pessoa.getCpf().isEmpty() || pessoa.getDataNascimento().after(new Date()) || pessoa.getContatos().isEmpty())
             return false;
         return true;
     }
