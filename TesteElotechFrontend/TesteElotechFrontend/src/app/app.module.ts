@@ -11,6 +11,9 @@ import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatTabsModule} from '@angular/material/tabs';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatListModule} from '@angular/material/list';
+import {MatTableModule} from '@angular/material/table';
+import { MatIconModule } from '@angular/material/icon';
+import {MatButtonModule} from '@angular/material/button';
 
 import { PessoaListaComponent } from './components/pessoa-lista/pessoa-lista.component';
 
@@ -28,6 +31,9 @@ import { PessoaListaComponent } from './components/pessoa-lista/pessoa-lista.com
     MatTabsModule,
     BrowserAnimationsModule,
     MatListModule,
+    MatTableModule,
+    MatIconModule,
+    MatButtonModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

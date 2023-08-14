@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../environments/environment';
 import { Observable } from 'rxjs';
 import { Pessoa } from './entities/Pessoa';
+import { Contato } from './entities/Contato';
 
 @Injectable({
   providedIn: 'root'
@@ -13,5 +14,9 @@ export class ApiService {
 
   getPessoas(): Observable<Pessoa[]>{
     return this.http.get<Pessoa[]>(`${environment.apiUrl}/pessoa`);
+  }
+
+  getContatos(id: number): Observable<Contato[]>{
+    return this.http.get<Contato[]>(`${environment.apiUrl}/pessoa/${id}/contatos`);
   }
 }
