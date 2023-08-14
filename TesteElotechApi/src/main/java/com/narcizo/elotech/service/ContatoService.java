@@ -1,6 +1,5 @@
 package com.narcizo.elotech.service;
 
-import com.narcizo.elotech.Utils.MyUtils;
 import com.narcizo.elotech.entity.Contato;
 import com.narcizo.elotech.entity.Pessoa;
 import com.narcizo.elotech.repository.ContatoRepository;

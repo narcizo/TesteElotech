@@ -1,18 +1,13 @@
 package com.narcizo.elotech.service;
 
-import com.narcizo.elotech.Utils.MyUtils;
 import com.narcizo.elotech.entity.Contato;
 import com.narcizo.elotech.entity.Pessoa;
 import com.narcizo.elotech.repository.PessoaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.Date;

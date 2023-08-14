@@ -1,25 +1,36 @@
 version: "3.1"
 
 services:
-#  app:
-#    image: 'docker-spring-boot-postgres:latest'
-#    build:
-#      context: .
-#    container_name: app
-#    depends_on:
-#      - db
-#    environment:
-#      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/teste_elotech_postgres
-#      - SPRING_DATASOURCE_USERNAME=admin
-#      - SPRING_DATASOURCE_PASSWORD=admin
-#      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+  springboot-app:
+    image: 'docker-spring-boot-postgres:latest'
+    build:
+      context: .
+    container_name: springboot-app
+    depends_on:
+      - postgres-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/teste_elotech_postgres
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=admin
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
 
-  postgres-compose:
+  postgres-db:
     image: postgres:15.3
     restart: always
+    container_name: postgres-db
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
       POSTGRES_DB: teste_elotech_postgres
     ports:
       - "5432:5432"
+
+  angular-app:
+    build:
+      context: ../../../../TesteElotechFrontend/TesteElotechFrontend
+      dockerfile: Dockerfile
+    container_name: angular-app
+    ports:
+      - "4200:4200"
+    depends_on:
+      - springboot-app
